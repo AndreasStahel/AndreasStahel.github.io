@@ -1,0 +1,8 @@
+this is a header line
+the file was generated on Sept 25, 2007
+
+a 4.03  5
+b -5.8  4
+c 1.0e3 3
+d -4.7E-6 2
+e 0 1
