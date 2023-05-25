@@ -1,6 +1,6 @@
 % generate the data, then plot
 % start with Exa = 1
-Exa = 3;
+Exa = 1;
 
 switch Exa
 case 1     % generate the data
