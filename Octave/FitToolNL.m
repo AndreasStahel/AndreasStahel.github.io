@@ -29,7 +29,7 @@
 ##   Other basis functions can be used by editing the function @r{f(x)} or @r{f(x,y)} in the box.
 ## @item @r{FitToolNL} uses the functions @r{nonlin_curvefit()} from the optim package.
 ## @item For advanced nonlinear regression problems use the commands @r{nonlin_curvefit()} or @r{leasqr()}. 
-##  They are considerably more powerfull and flexibel.
+## They are considerably more powerfull and flexibel.
 ## @end itemize
 ## @seealso{nonlin_curvefit, leasqr, fsolve, lsqcurvefit, nlinfit}
 ## @end deftypefn
@@ -189,7 +189,7 @@ function update_plot1D(obj, init = false)
   x = x_data; y = y_data;
   p0 = eval(get(h.plot_p0_edit,"string"));
   [p, fy, cvg] = nonlin_curvefit (func, p0', x_data, y_data);
-  if cvg <= 0  %% nonlin_curvefit dit not converge
+  if cvg <= 0  %% nonlin_curvefit did not converge
      helpdlg({"nonlin-curvefit() did not converge",...
               "try again with better initial values for the parameters p_i"},...
               "FitToolNL: did not converge")
@@ -219,7 +219,7 @@ function update_plot2D(obj, init = false)
   x = x_data; y = y_data; z = z_data;
   p0 = eval(get(h.plot_p0_edit,"string"));
   [p, fy, cvg] = nonlin_curvefit (func_merge, p0', [x_data, y_data], z_data);
-  if cvg <= 0  %% nonlin_curvefit dit not converge
+  if cvg <= 0  %% nonlin_curvefit did not converge
      helpdlg({"nonlin-curvefit() did not converge",...
               "try again with better initial values for the parameters p_i"},...
               "FitToolNL: did not converge")
@@ -250,7 +250,6 @@ function restart(obj, init = false)
   endif
 endfunction
 
-
 function export(obj, init = false)
   h = guidata(obj);
   ExportImport = get (h.Save_button, 'string'){get (h.Save_button, 'value')};
@@ -268,7 +267,7 @@ function export(obj, init = false)
   endswitch
 endfunction
 
-function ShowHelp
+function ShowHelp(obj, init = false)
    helpdlg({"This GUI FitToolNL allows to solve simple nonlinear regression problems with one or two independent variables",...
    " ", "top left: data input","* read the data from the base context, where it has to exist",...
    "  the expressions are evaluated in the base context"," ",...
@@ -399,8 +398,8 @@ h.plot_func_select = uicontrol ("style", "popupmenu",
                                           "Polynomial, quadratic",
                                           "Trigonometric",
                                           "Exponential",
-       					                          "Exponential and constant",
-					                                "Gaussian"},
+		                          "Exponential and constant",
+                                          "Gaussian"},
                                "callback", @update_function2D,
                                "position", [0.45 0.95 0.40 0.05]);
 
