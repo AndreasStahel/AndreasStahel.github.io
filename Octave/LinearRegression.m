@@ -15,8 +15,8 @@
 
 
 ## -*- texinfo -*-
-## @deftypefn {Function File} {} LinearRegression (@var{F}, @var{y})
-## @deftypefnx {Function File} {} LinearRegression (@var{F}, @var{y}, @var{w})
+## @deftypefn {Function File} {} LinearRegression (@var{F}, @var{y},@var{options})
+## @deftypefnx {Function File} {} LinearRegression (@var{F}, @var{y}, @var{w},@var{options})
 ## @deftypefnx {Function File} {[@var{p}, @var{e_var}, @var{r}, @var{p_var}, @var{fit_var}] =} LinearRegression (@dots{})
 ##
 ##
@@ -27,7 +27,7 @@
 ## y_i by f(x_i) for i=1,...,n, i.e. minimize
 ## sum_(i=1,...,n)(y_i-sum_(j=1,...,m) p_j*f_j(x_i))^2 with respect to p_j
 ##
-## parameters:  
+## parameters:
 ## @itemize
 ## @item @var{F} is an n*m matrix with the values of the basis functions at
 ## the support points. In column j give the values of f_j at the points
@@ -36,7 +36,8 @@
 ## @item @var{w} is a column vector of length n with the weights of
 ## the data points. 1/w_i is expected to be proportional to the
 ## estimated uncertainty in the y values. Then the weighted expression
-## sum_(i=1,...,n)(w_i^2*(y_i-f(x_i))^2) is minimized.
+## sum_(i=1,...,n)(w_i^2*(y_i-f(x_i))^2) is minimized. If @var{weight} is a scalar, equal weights are used.
+## @item @var{options}: if a string @var{'covp'} and a scalar @var{1} is provided the covariance matrix for the parameters is returned in place of @var{p_var}
 ## @end itemize
 ##
 ## return values:
@@ -55,7 +56,7 @@
 ## To estimate the variance of the difference between future y values
 ## and fitted y values use the sum of @var{e_var} and @var{fit_var}
 ##
-## Caution:  
+## Caution:
 ## do NOT request @var{fit_var} for large data sets, as a n by n matrix is
 ## generated
 ##
@@ -67,23 +68,40 @@
 ## @c END_CUT_TEXINFO
 ##  @end deftypefn
 
-function [p, e_var, r, p_var, fit_var] = LinearRegression (F, y, weight)
+function [p, e_var, r, p_var, fit_var] = LinearRegression (F, y, weight, varargin)
 
-  if (nargin < 2 || nargin >= 4)
+%%  if (nargin < 2 || nargin >= 4)
+  if (nargin < 2)
     print_usage ();
   endif
 
+  i = 1;
+  covp = 0;  %% by default no covariance matrix
+  while ( i <= length(varargin) )
+    switch lower(varargin{i})
+      case 'covp'
+        i = i + 1;
+        covp = varargin{i};
+      otherwise
+        error('Invalid Name argument.',[]);
+    end
+    i = i + 1;
+  end
+
+
   [rF, cF] = size (F);
   [ry, cy] = size (y);
-  
+
   if (rF != ry || cy > 1)
     error ('LinearRegression: incorrect matrix dimensions');
   endif
 
   if (nargin == 2)  # set uniform weights if not provided
     weight = ones (size (y));
+  elseif isscalar(weight)
+        weight = weight*ones (size (y));
   else
-    weight = weight(:);
+	weight = weight(:);
   endif
 
   wF = diag (weight) * F;  # this is efficent with the diagonal matrix
@@ -114,9 +132,13 @@ function [p, e_var, r, p_var, fit_var] = LinearRegression (F, y, weight)
       M2 = (F * M).^2;
       fit_var =  M2 * e_var;  # variance of the function values
     endif
-    
-    p_var = M.^2 * e_var;  # variance of the parameters
-    
+
+    if covp == 0
+      p_var = M.^2 * e_var;  ## variance of the parameters
+    else
+      p_var = inv (R'*R) * mean (var);  ## covariance matrix for parameters
+    endif
+
   endif
 
 endfunction
