@@ -40,7 +40,7 @@
 ## @item @var{grid} is the grid on which @var{u} is evaluated. It consists of
 ## (@var{N1}+1)x(@var{N2}+1) equidistant points on the rectangle @var{box}.
 ## @item @var{u} are the values of the regularized approximation to the @var{data} evaluated on the @var{grid}.
-## @item @var{data_valid} returns the values data points used and the values of the regularized function at these points
+## @item @var{data_valid} returns the coordinates of the data points used and the values of the regularized function at these points
 ## @end itemize
 ## @seealso {tpaps, regularization, demo regularization2D}
 ## @end deftypefn
